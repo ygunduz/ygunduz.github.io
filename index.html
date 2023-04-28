@@ -1,24 +1,488 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /*
+         * Optional: Makes the sample page fill the window.
+         */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #description {
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        #infowindow-content .title {
+            font-weight: bold;
+        }
+
+        #infowindow-content {
+            display: none;
+        }
+
+        #map #infowindow-content {
+            display: inline;
+        }
+
+        .pac-card {
+            background-color: #fff;
+            border: 0;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+            margin: 10px;
+            padding: 0 0.5em;
+            font: 400 18px Roboto, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .pac-container {
+            padding-bottom: 12px;
+            margin-right: 12px;
+            z-index: 1100;
+        }
+
+        .pac-controls {
+            display: inline-block;
+            padding: 5px 11px;
+        }
+
+        .pac-controls label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        #pac-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        #pac-input:focus {
+            border-color: #4D90FE;
+        }
+
+        .map-container-9,
+        .map-container-10,
+        .map-container-11 {
+            overflow: hidden;
+            padding-bottom: 56.25%;
+            position: relative;
+            height: 0;
+        }
+
+        .map-container-9 div#map,
+        .map-container-10 div#map,
+        .map-container-11 div#map {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+        .img-upload-btn {
+            position: relative;
+            overflow: hidden;
+            padding-top: 10%;
+            width: 98%;
+        }
+
+        .img-upload-btn input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+
+        .img-upload-btn i {
+            position: absolute;
+            height: 16px;
+            width: 16px;
+            top: 50%;
+            left: 50%;
+            margin-top: -10px;
+            margin-left: -8px;
+        }
+
+        .btn-radio {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-radio input[type=radio] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+
+        .image {
+            position: relative;
+            overflow: hidden;
+            padding-bottom: 100%;
+        }
+
+        .image img {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .camera {
+            width: 100%;
+            height: 35vh;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 50%;
+            transform: translate(0, -50%);
+        }
+
+        .video-control {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
 </head>
+
 <body>
-    <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde dolor tenetur ullam dicta, esse expedita inventore vitae. Aliquid vitae perspiciatis ipsum quidem laborum aut id itaque? Doloremque nesciunt quo corporis.
-    </p>
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptas iusto officia eius dolore, ipsam ut repudiandae? Officia quod totam unde? Ipsam officia minus sint quidem reiciendis placeat iste tempore! Quis.
-    </p>
-    <p>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae sed nemo eum maxime labore. Mollitia iste illo fugit totam, magnam aut obcaecati aliquid aperiam rem, ipsa suscipit exercitationem omnis error.
-    </p>
-    <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis officiis mollitia eum, saepe libero ipsam similique aspernatur earum assumenda magni, fuga voluptates ad, vero maxime? Autem labore quod sit explicabo.
-    </p>
-    <iframe width="100%" height="400" src="https://www.omglinux.com/vanilla-os-first-release-download/" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <form class="p-2">
+        <div class="form-group">
+            <label for="location">Konum</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="location" id="location" placeholder="Konum Şeçiniz"
+                    aria-label="Konum">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal"
+                        data-bs-target="#modalLocation">Konum Seç
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="location">Fotoğraflar</label>
+            <div class="row" id="imageContainer">
+                <div class="col-12 d-flex justify-content-md-between">
+                    <div class="form-group col-6">
+                        <div class="img-picker">
+                            <div class="img-upload-btn form-control btn btn-outline-secondary">
+                                <i class="bi bi-cloud-upload"></i>
+                                <input id="images" type="file" multiple name="images" accept="image/jpeg,image/png" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-6" style="margin-left: 1%;">
+                        <div class="img-picker">
+                            <div class="img-upload-btn form-control btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#modalPhoto">
+                                <i class="bi bi-camera"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group mt-2">
+            <button type="submit" class="btn w-100 btn-outline-secondary">Kaydet</button>
+        </div>
+    </form>
+    <div class="modal fade" id="modalPhoto" tabindex="-1" role="dialog" aria-hidden="true"
+        aria-labelledby="modalPhotoLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body mb-0 p-0">
+                    <input type="hidden" id="capturedPhoto"></input>
+                    <div class="camera">
+                        <video id="video">Video stream not available.</video>
+                        <button class="btn btn-info rounded-circle video-control" id="takeButton"><i
+                                class="bi bi-camera"></i></button>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <button style="display: none;" class="btn btn-info rounded-circle video-control"
+                            id="discardButton"><i class="bi bi-x"></i></button>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button id="btnConfirmPhoto" type="button" class="btn btn-info btn-md">Seç</button>
+                    <button type="button" class="btn btn-outline-info btn-md" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-hidden="true"
+        aria-labelledby="modalLocationLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body mb-0 p-0">
+                    <div id="map-container-google-16" class="z-depth-1-half map-container-9" style="height: 400px">
+                        <input id="pac-input" class="controls form-control" type="text" placeholder="Search Box" />
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button id="btnConfirmLocation" type="button" class="btn btn-info btn-md">Seç</button>
+                    <button type="button" class="btn btn-outline-info btn-md" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        var lp = null;
+        var selectedLocation = null;
+        (function ($) {
+            let imagePicker = null;
+            let settings = null;
+            $.fn.imagePicker = function (options) {
+                // Define plugin options
+                settings = $.extend({
+                    // Input name attribute
+                    name: options.name,
+                    // Classes for styling the input
+                    class: "form-control btn btn-outline-secondary",
+                    // Icon which displays in center of input
+                    icon: "bi bi-plus-square",
+                    container: "imageContainer",
+                    input: "images"
+                }, options);
+                // Create an input inside each matched element
+                imagePicker = this;
+                return create_btn();
+            };
+
+            $('#btnConfirmPhoto').on('click', function () {
+                const photo = $('#capturedPhoto').val();
+                if (photo && photo !== '') {
+                    const f = dataURLtoFile(photo);
+                    appendPreview(photo, f);
+                }
+                $('#modalPhoto').modal('hide');
+            });
+
+            function appendPreview(src, file) {
+                const preview = create_preview(src, file);
+                if (containsFile(imagePicker.selectedFiles, file) === false) {
+                    $(`#${settings.container}`).prepend(preview);
+                }
+                imagePicker.selectedFiles = appendFile(imagePicker.selectedFiles, file);
+                imagePicker.fileInput.prop('files', imagePicker.selectedFiles);
+            }
+
+            // Private function for creating the input element
+            function create_btn() {
+                imagePicker.fileInput = $(`#${settings.input}`);
+                imagePicker.selectedFiles = new DataTransfer().files;
+                // File load listener
+                imagePicker.fileInput.change(function () {
+                    if ($(this).prop('files')) {
+                        const files = $(this).prop('files');
+                        Object.keys(files).forEach(i => {
+                            const file = files[i];
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                appendPreview(e.target.result, file);
+                            }
+                            // Load image
+                            reader.readAsDataURL(file);
+                        })
+                    }
+                });
+            }
+            // Private function for creating a preview element
+            function create_preview(src, file) {
+                // The preview image
+                const picker_preview_image = $('<div class="image"><img src="' + src + '" class="rounded img-thumbnail preview-img" /></div>');
+                // The remove image button
+                const picker_preview_remove = $('<button class="btn btn-link"><small>Remove</small></button>');
+                // The preview element
+                const picker_preview = $('<div class="text-center col-3"></div>')
+                    .append(picker_preview_image)
+                    .append(picker_preview_remove);
+                // Remove image listener
+                picker_preview_remove.click(function () {
+                    picker_preview.remove();
+                    imagePicker.selectedFiles = removeFile(imagePicker.selectedFiles, file);
+                    imagePicker.fileInput.prop('files', imagePicker.selectedFiles);
+                });
+                return picker_preview;
+            }
+        }(jQuery));
+
+        $(document).ready(function () {
+            $("#modalLocation").on('shown.bs.modal', function () {
+                initAutocomplete();
+            });
+            $("#btnConfirmLocation").on("click", function () {
+                selectedLocation = lp.getMarkerPosition();
+                $('#location').val(`${selectedLocation.lat.toFixed(5)},${selectedLocation.lng.toFixed(5)}`);
+                $('#modalLocation').modal('hide');
+            });
+            $('.img-picker').imagePicker({ name: 'images' });
+        });
+
+        function uuidv4() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+
+        function dataURLtoFile(dataurl, filename) {
+            var arr = dataurl.split(','),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]),
+                n = bstr.length,
+                u8arr = new Uint8Array(n);
+
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            if (!filename) {
+                filename = `${uuidv4()}.${mime.split('/')[1]}`;
+            }
+
+            return new File([u8arr], filename, { type: mime });
+        }
+
+        function containsFile(files, file) {
+            for (let f of files)
+                if (file.name === f.name)
+                    return true;
+            return false;
+        }
+
+        function appendFile(files, file) {
+            const dt = new DataTransfer()
+            let contains = false;
+            for (let f of files) {
+                dt.items.add(f)
+                if (f.name === file.name) {
+                    contains = true;
+                }
+            }
+            if (contains === false) {
+                dt.items.add(file);
+            }
+            return dt.files
+        }
+
+        function removeFile(files, file) {
+            const dt = new DataTransfer()
+            for (let f of files)
+                if (file !== f)
+                    dt.items.add(f)
+            return dt.files
+        }
+
+        function initAutocomplete() {
+            if (lp !== null) return;
+            lp = new locationPicker('map', {
+                setCurrentPosition: true, // You can omit this, defaults to true
+            }, {
+                zoom: 15, // You can set any google map options here, zoom defaults to 15
+                mapTypeControl: false,
+                streetViewControl: false,
+                scaleControl: false,
+                fullscreenControl: false,
+                zoomControl: false
+            });
+            const map = lp.map;
+            // Create the search box and link it to the UI element.
+            const input = document.getElementById("pac-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+                if (places.length === 0) {
+                    return;
+                }
+                // For each place, get the icon, name and location.
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach((place) => {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+        window.initAutocomplete = initAutocomplete;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places&v=weekly"
+        defer></script>
+    <script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+    <script src="capture.js"></script>
 </body>
+
 </html>
