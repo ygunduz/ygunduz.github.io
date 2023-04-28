@@ -142,7 +142,7 @@
       canvasHeight = canvasWidth / aspectRatio;
     } else {
       canvasHeight = document.getElementsByClassName('camera')[0].offsetHeight;
-      canvasWidth = canvasHeight / aspectRatio;
+      canvasWidth = canvasHeight * aspectRatio;
     }
 
     canvas.style.width = canvasWidth;
