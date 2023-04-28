@@ -26,6 +26,7 @@
     video = document.getElementById('video');
     canvas = document.getElementById('canvas');
     photo = document.getElementById('capturedPhoto');
+    photoPreview = document.getElementById('photo');
     startbutton = document.getElementById('takeButton');
     discardbutton = document.getElementById('discardButton');
 
@@ -33,7 +34,7 @@
       video: {
         width: { min: 1024, ideal: 1280, max: 1920 },
         height: { min: 576, ideal: 720, max: 1080 },
-        facingMode: { exact: "environment" },
+        // facingMode: { exact: "environment" },
       }, audio: false
     })
       .then(function (stream) {
@@ -45,8 +46,6 @@
       });
 
     video.addEventListener("loadedmetadata", function (e) {
-      console.log(this.videoWidth)
-      console.log(this.videoHeight)
       videoWidth = this.videoWidth;
       videoHeight = this.videoHeight;
     }, false);
@@ -93,6 +92,7 @@
 
     var data = canvas.toDataURL('image/png');
     photo.setAttribute('value', '');
+    photoPreview.setAttribute('src', '');
   }
 
   // Capture a photo by fetching the current contents of the video
@@ -104,11 +104,14 @@
   function takepicture() {
     var context = canvas.getContext('2d');
     if (width && height) {
-      const { canvasWidth, canvasHeight } = setCanvasDimensions();
-      context.drawImage(video, 0, 0, canvasWidth, canvasHeight);
+      // const { canvasWidth, canvasHeight } = setCanvasDimensions();
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
+      context.drawImage(video, 0, 0, videoWidth, videoHeight);
 
       var data = canvas.toDataURL('image/png');
       photo.setAttribute('value', data);
+      photoPreview.setAttribute('src', data);
 
       setState(false);
     } else {
@@ -118,14 +121,14 @@
 
   function setState(isPlaying) {
     if (isPlaying) {
-      canvas.style.display = "none";
+      photoPreview.style.display = "none";
       discardbutton.style.display = "none";
       video.style.display = "block";
       startbutton.style.display = "block";
       clearphoto();
       video.play();
     } else {
-      canvas.style.display = "block";
+      photoPreview.style.display = "block";
       discardbutton.style.display = "block";
       video.style.display = "none";
       startbutton.style.display = "none";
@@ -159,7 +162,7 @@
   document.getElementById('modalPhoto').addEventListener('shown.bs.modal', startup, false);
   document.getElementById('modalPhoto').addEventListener('hide.bs.modal', function () {
     video.pause();
-    canvas.style.display = "none";
+    // canvas.style.display = "none";
     discardbutton.style.display = "none";
     video.style.display = "block";
     startbutton.style.display = "block";
