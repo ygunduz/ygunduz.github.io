@@ -33,7 +33,7 @@
       video: {
         width: { min: 1024, ideal: 1280, max: 1920 },
         height: { min: 576, ideal: 720, max: 1080 },
-        facingMode: { exact: "environment" },
+        // facingMode: { exact: "environment" },
       }, audio: false
     })
       .then(function (stream) {
@@ -45,6 +45,8 @@
       });
 
     video.addEventListener("loadedmetadata", function (e) {
+      console.log(this.videoWidth)
+      console.log(this.videoHeight)
       videoWidth = this.videoWidth;
       videoHeight = this.videoHeight;
     }, false);
@@ -134,7 +136,7 @@
   function setCanvasDimensions() {
     const aspectRatio = videoWidth / videoHeight;
     const canvasWidth = document.getElementsByClassName('camera')[0].offsetWidth;
-    const canvasHeight = canvasWidth / aspectRatio;
+    const canvasHeight = aspectRatio > 1 ? canvasWidth / aspectRatio : canvasWidth * aspectRatio;
     canvas.style.width = canvasWidth;
     canvas.style.height = canvasHeight;
     canvas.width = canvasWidth;
