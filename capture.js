@@ -135,8 +135,8 @@
 
   function setCanvasDimensions() {
     const aspectRatio = videoWidth / videoHeight;
-    let canvasWidth = document.getElementsByClassName('camera')[0].offsetWidth;
-    let canvasHeight = canvasWidth / aspectRatio;
+    let canvasWidth = 0;
+    let canvasHeight = 0;
     if (aspectRatio > 0) {
       canvasWidth = document.getElementsByClassName('camera')[0].offsetWidth;
       canvasHeight = canvasWidth / aspectRatio;
